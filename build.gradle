@@ -1,0 +1,68 @@
+/*
+ * Copyright 2020 DarksideCode
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+plugins {
+    id 'java'
+}
+
+group 'me.darksidecode.lvq4j.examples.iris'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+
+    maven {
+        name 'Public Reflex Repository'
+        url 'https://archiva.reflex.rip/repository/public/'
+    }
+}
+
+def log4jVersion = '2.13.3'
+
+dependencies {
+    // Required
+    implementation group: 'me.darksidecode.lvq4j', name: 'lvq4j', version: '1.0.2'
+
+    // Not required to use LVQ4J, but essential. We also use log4j in this example project ourselves
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: "${log4jVersion}"
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: "${log4jVersion}"
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: "${log4jVersion}"
+
+    // Annotation processors
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+}
+
+// For Lombok
+configurations {
+    compileClasspath.extendsFrom annotationProcessor
+}
+
+jar {
+    // Build MANIFEST
+    manifest {
+        attributes 'Main-Class': 'me.darksidecode.lvq4j.examples.iris.IrisClassificationExample'
+    }
+
+    // Include dependencies (libraries)
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
